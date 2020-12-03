@@ -1,0 +1,22 @@
+{
+  "name": "sevengui",
+  "version": "1.0.0",
+  "description": "FIXME: my new application.",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@testing-library/react": "^11.2.2",
+    "react": "17.0.1",
+    "react-dom": "17.0.1",
+    "shadow-cljs": "^2.11.8"
+  }
+}

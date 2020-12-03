@@ -1,0 +1,13 @@
+{:deps {:aliases [:shadow]}
+ :dev-http {8000 "resources/public"}
+ :builds
+ {:app {:target :browser
+        :output-dir "resources/public/js"
+        :modules {:main {:entries [sevengui.core]}}}
+  :test {:target :browser-test
+         :test-dir "resources/test"
+         :ns-regexp "-test$"
+         :devtools {:http-port 8021
+                    :http-root "resources/test"}}}}
+
+
