@@ -12,7 +12,7 @@
 (defn numeric-val [num]
   (if (js/isNaN num)
     nil
-    num))
+    (js/parseFloat num)))
 
 (defn celsius->fahrenheit [celsius]
   (some-> celsius
