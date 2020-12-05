@@ -7,7 +7,9 @@
     [sevengui.temperature-converter :refer [temperature-converter]]))
 
 (deftest temperature-converter-testing
-  (doseq [[c f] [[10 50]
+  (doseq [[c f] [[-12 10.4]
+                 [-5 23]
+                 [10 50]
                  [15 59]
                  [35 95]
                  [41 105.8]]]
@@ -22,10 +24,13 @@
            (r/flush)
            (is (= (.toString f) (.-value fahrenheit))))))))
 
-  (doseq [[f c] [[91.4 33]
-                 [98.6 37]
-                 [73.4 23]
-                 [25 -3.89]]]
+  (doseq [[c f] [[-17.78 0]
+                 [-15 5]
+                 [-13.33 8]
+                 [7.22 45]
+                 [15.56 60]
+                 [29.44 85]
+                 [38.89 102]]]
     (testing (str "should convert celsius=" c " when fahrenheit=" f " has been updated")
       (with-component
         [temperature-converter]
@@ -37,7 +42,7 @@
             (r/flush)
             (is (= (.toString c) (.-value celsius))))))))
 
-  (testing "should not update fahrenheit when celsius is non-numeric"
+  (testing "should make fahrenheit empty when celsius is non-numeric"
     (with-component
       [temperature-converter]
       (fn [view]
@@ -46,7 +51,18 @@
           (.change rtl/fireEvent celsius #js {:target #js {:value "abc"}})
           (is (= "abc" (.-value celsius)))
           (r/flush)
-          (is (= "" (.-value fahrenheit))))))))
+          (is (= "" (.-value fahrenheit)))))))
+
+  (testing "should make celsius empty when fahrenheit is non-numeric"
+    (with-component
+      [temperature-converter]
+      (fn [view]
+        (let [fahrenheit (.getByRole view "textbox" #js {:name "fahrenheit"})
+              celsius (.getByRole view "textbox" #js {:name "celsius"})]
+          (.change rtl/fireEvent fahrenheit #js {:target #js {:value "abc"}})
+          (is (= "abc" (.-value fahrenheit)))
+          (r/flush)
+          (is (= "" (.-value celsius))))))))
 
 
 
