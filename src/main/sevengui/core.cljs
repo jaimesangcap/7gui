@@ -4,7 +4,8 @@
     [reagent.dom :as rdom]
     [sevengui.counter :refer [counter]]
     [sevengui.temperature-converter :refer [temperature-converter]]
-    [sevengui.flight-booker :refer [flight-booker]]))
+    [sevengui.flight-booker :refer [flight-booker]]
+    [sevengui.timer :refer [timer]]))
 
 (defn root []
   [:div
@@ -16,7 +17,11 @@
     [temperature-converter]]
    [:section
     [:h1 "Flight Booker"]
-    [flight-booker]]])
+    [flight-booker]]
+   [:section
+    [:h1 "Timer"]
+    [:div {:style {:width "200px"}}
+     [timer]]]])
 
 (rdom/render [root] (js/document.getElementById "root"))
 
