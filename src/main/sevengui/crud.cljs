@@ -5,6 +5,7 @@
 
 (def base-spacing "8px")
 
+;; how to remove warning about unique key here? react think its a list
 (defn form-field [& children]
   [:div {:style {:display "flex" :justify-content "space-between"}}
    (into children)])
@@ -14,13 +15,15 @@
          :style {:background-color (when selected "blue")}}
    (str (:surname person) ", " (:name person))])
 
-
 (def person-id (atom 0))
 (defn new-id []
   (swap! person-id inc))
 
 (defn new-person [p]
   (assoc p :id (new-id)))
+
+(defn clear-form [state]
+  (swap! state assoc :form {}))
 
 (defn crud []
   (let [people (r/atom {})
@@ -46,7 +49,6 @@
                          (vals @people))]
            ^{:key (:id p)} [person-item {:person p
                                          :on-select (fn [person]
-                                                      (js/console.log " person " person)
                                                       (swap! state assoc
                                                              :selected-person person
                                                              :form person))
@@ -72,7 +74,7 @@
         [:button {:on-click (fn []
                               (let [id (new-id)]
                                 (swap! people assoc id (assoc (:form @state) :id id))
-                                (swap! state assoc :form {})))}
+                                (clear-form state)))}
          "Create"]
         [:button {:disabled (nil? (:selected-person @state))
                   :on-click (fn []
@@ -81,7 +83,7 @@
         [:button {:disabled (nil? (:selected-person @state))
                   :on-click (fn [_e]
                               (swap! people dissoc (get-in @state [:selected-person :id]))
-                              (swap! state assoc :form {}))} "Delete"]]])))
+                              (clear-form state))} "Delete"]]])))
 
 
 (comment
