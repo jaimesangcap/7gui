@@ -5,7 +5,8 @@
     [sevengui.counter :refer [counter]]
     [sevengui.temperature-converter :refer [temperature-converter]]
     [sevengui.flight-booker :refer [flight-booker]]
-    [sevengui.timer :refer [timer]]))
+    [sevengui.timer :refer [timer]]
+    [sevengui.crud :refer [crud]]))
 
 (defn root []
   [:div
@@ -21,7 +22,10 @@
    [:section
     [:h1 "Timer"]
     [:div {:style {:width "200px"}}
-     [timer]]]])
+     [timer]]]
+   [:section {:style {:width "600px"}}
+    [:h1 "CRUD"]
+    [crud]]])
 
 (rdom/render [root] (js/document.getElementById "root"))
 
