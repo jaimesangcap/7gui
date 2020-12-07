@@ -31,38 +31,41 @@
     (fn []
       [:div
        [:form
-        [:span "Filter prefix: "]
+        [:label {:for "filter"} "Filter prefix: "]
         [:input {:type "text"
+                 :id "filter"
                  :value (:filter @state)
                  :on-change #(swap! state assoc :filter (.. % -target -value))}]]
        [:div {:style {:display "flex"
                       :margin-top base-spacing}}
-        [:div {:style {:border "1px solid #eee"
+        [:div {:data-testid "listbox"
+               :style {:border "1px solid #eee"
                        :flex 1
                        :padding base-spacing}}
          (for [p (filter #(str/starts-with? (:surname %) (:filter @state))
                          (vals @people))]
-           (do (js/console.log "selected " (= p (:selected-person @state)))
-               ^{:key (:id p)} [person-item {:person p
-                                             :on-select (fn [person]
-                                                          (js/console.log " person " person)
-                                                          (swap! state assoc
-                                                                 :selected-person person
-                                                                 :form person))
-                                             :selected (= (:id p) (:id (:selected-person @state)))}]))]
+           ^{:key (:id p)} [person-item {:person p
+                                         :on-select (fn [person]
+                                                      (js/console.log " person " person)
+                                                      (swap! state assoc
+                                                             :selected-person person
+                                                             :form person))
+                                         :selected (= (:id p) (:id (:selected-person @state)))}])]
 
         [:div {:style {:padding base-spacing}}
          [:div {:style {:display "flex"
                         :flex-direction "column"
                         :padding base-spacing}}
           [form-field
-           [:label "Name: "]
+           [:label {:for "name"} "Name: "]
            [:input {:type "text"
+                    :id "name"
                     :value (get-in @state [:form :name])
                     :on-change #(swap! state assoc-in [:form :name] (.. % -target -value))}]]
           [form-field
-           [:label "Surname: "]
+           [:label {:for "surname"} "Surname: "]
            [:input {:type "text"
+                    :id "surname"
                     :value (get-in @state [:form :surname])
                     :on-change #(swap! state assoc-in [:form :surname] (.. % -target -value))}]]]]]
        [:div {:style {:display "flex"}}
