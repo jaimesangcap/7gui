@@ -21,6 +21,7 @@
 
 (defn undo-reducer [state action]
   (let [{:keys [past present future]} state]
+    (js/console.log "reducer state before action " state)
     (condp = (:type action)
       :set {:past (conj past present)
             :present (:new-present action)
@@ -31,7 +32,9 @@
                  :future []}
 
       :undo {:past (pop past)
-             :present (peek past)
+             :present (let [v (peek past)]
+                        (js/console.log "new pres " v)
+                        v)
              :future (conj future present)}
 
       :redo {:past (conj past present)
@@ -66,15 +69,16 @@
                   :height 600})
 
 ;; TODO hide the notion of past, present, future state to the undo API user
+;; TODO fix undo bug, adding entry to past when undoing
 (defn circle-drawer []
   (let [[state {:keys [set hard-set undo redo]}] (use-undo {:circles {}
-                                                            :selected-circle nil})
+                                                            :selected-circle nil
+                                                            :adjust-menu {:open? false
+                                                                          :value 30}})
         canvas (atom nil)
         context-menu (r/atom {:x 0
                               :y 0
-                              :open? false})
-        adjust-menu (r/atom {:open? false
-                             :value 30})]
+                              :open? false})]
     (r/create-class
       {:display-name "circle-drawer"
        :reagent-render
@@ -97,11 +101,11 @@
                           :box-shadow "0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -1px rgba(0,0,0,0.06)"}}
             [:div {:on-click (fn [e]
                                (swap! context-menu assoc :open? false)
-                               (swap! adjust-menu assoc :open? true))}
+                               (set (update (:present @state) :adjust-menu assoc :open? true)))}
              "Adjust Diameter"]]
 
            [:div {:style {:position "absolute"
-                          :display (if (:open? @adjust-menu) "block" "none")
+                          :display (if (get-in @state [:present :adjust-menu :open?]) "block" "none")
                           :transform "translateX(-50%)"
                           :bottom "100px"
                           :left "50%"
@@ -112,22 +116,25 @@
 
             [:div {:style {:display "flex" :justify-content "center" :flex-direction "column"}}
              [:div (str "Adjust diameter of circle at " (display-coords (get-in @state [:present :selected-circle])))]
-             [:span "radius: " (:value @adjust-menu)]
+             [:span "radius: " (get-in @state [:present :adjust-menu :value])]
              [:input {:type "range"
                       :default-value (get-in (:present @state) [:selected-circle :r])
-                      :value (:value @adjust-menu)
+                      :value (get-in @state [:present :adjust-menu :value])
                       :on-mouse-up (fn [e]
-                                     (set (update (:present @state) :circles (fn [circles]
-                                                                               (update circles
-                                                                                       (get-in (:present @state) [:selected-circle :id])
-                                                                                       #(assoc % :r (.. e -target -value)))))))
+                                     (let [val (.. e -target -value)
+                                           circle-id (get-in @state [:present :selected-circle :id])
+                                           new-state (-> (:present @state)
+                                                         (update :circles assoc-in [circle-id :r] val)
+                                                         (update :adjust-menu assoc :value val))]
+                                       (js/console.log "new -state " new-state)
+                                       (set new-state)))
                       :on-change (fn [e]
-                                   (let [val (.. e -target -value)]
-                                     (swap! adjust-menu assoc :value val)
-                                     (hard-set (update (:present @state) :circles (fn [circles]
-                                                                                    (update circles
-                                                                                            (get-in (:present @state) [:selected-circle :id])
-                                                                                            #(assoc % :r val)))))))}]]]
+                                   (let [val (.. e -target -value)
+                                         circle-id (get-in @state [:present :selected-circle :id])
+                                         new-state (-> (:present @state)
+                                                       (update :circles assoc-in [circle-id :r] val)
+                                                       (update :adjust-menu assoc :value val))]
+                                     (hard-set new-state)))}]]]
 
 
            [:svg {:width (:width canvas-size)
@@ -138,7 +145,8 @@
                   :ref (fn [el] (reset! canvas el))
                   :on-click (fn [e]
                               (let [circle (new-circle e)]
-                                (set (update (:present @state) :circles #(assoc % (:id circle) circle)))))}
+                                (set (update (:present @state) :circles #(assoc % (:id circle) circle)))
+                                (hard-set (assoc (:present @state) :selected-circle circle))))}
             (doall
               (for [{:keys [id x y r] :as circle} (vals (:circles (:present @state)))]
                 ^{:key id}
@@ -148,8 +156,10 @@
                           :fill (if (= id (get-in (:present @state) [:selected-circle :id])) "#ccc" "white")
                           :stroke "#ccc"
                           :stroke-width 1
-                          :on-mouse-over (fn [e]
-                                           (hard-set (assoc (:present @state) :selected-circle circle)))}]))]]])
+                          :on-click (fn [e]
+                                      (.stopPropagation e)
+                                      (hard-set (assoc (:present @state) :selected-circle circle)))}]))]]])
+
 
        :component-did-mount
        (fn [this]
