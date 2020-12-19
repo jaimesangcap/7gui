@@ -15,3 +15,7 @@ resources/test/js
 
 node_modules/
 .shadow-cljs/
+
+
+.idea/
+projectFilesBackup/
