@@ -1,0 +1,5 @@
+.calva/
+*.calva-repl
+*.clj
+*.cljs
+*.cljc
