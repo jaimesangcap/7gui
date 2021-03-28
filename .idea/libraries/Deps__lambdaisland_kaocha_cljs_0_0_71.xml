@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="Deps: lambdaisland/kaocha-cljs:0.0-71">
-    <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/lambdaisland/kaocha-cljs/0.0-71/kaocha-cljs-0.0-71.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

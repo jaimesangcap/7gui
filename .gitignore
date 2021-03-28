@@ -9,6 +9,11 @@
 /.nrepl-port
 .hgignore
 .hg/
+.clj-kondo/
+.calva/
+.lsp/
+.idea/
+*.iml
 
 resources/public/js
 resources/test/js
@@ -16,6 +21,4 @@ resources/test/js
 node_modules/
 .shadow-cljs/
 
-
-.idea/
 projectFilesBackup/

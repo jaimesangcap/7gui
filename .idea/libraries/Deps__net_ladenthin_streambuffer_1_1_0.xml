@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="Deps: net.ladenthin/streambuffer:1.1.0">
-    <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/net/ladenthin/streambuffer/1.1.0/streambuffer-1.1.0.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
