@@ -29,6 +29,9 @@
     [crud]]
    [:section
     [:h1 "6. Circle Drawer"]
+    [:p "Click anywhere in canvas to create circle."]
+    [:p "Left-click to select a circle."]
+    [:p "Right-click to show context menu to adjust the diameter of selected circle."]
     [circle-drawer]]])
 
 
